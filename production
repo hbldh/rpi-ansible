@@ -1,5 +1,3 @@
 # file: production
 
-[atlanta-webservers]
-www-atl-1.example.com
-www-atl-2.example.com
+[berryimu-pis]

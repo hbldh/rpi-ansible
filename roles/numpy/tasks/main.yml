@@ -1,0 +1,11 @@
+- name: Install packages needed for NumPy
+  sudo: yes
+  apt: pkg={{ item.pkg }} state=latest
+  with_items:
+    - { pkg: 'build-essential'}
+    - { pkg: 'gfortran'}
+    - { pkg: 'liblapack-dev'}
+    - { pkg: 'libblas-dev'}
+    - { pkg: 'libatlas-dev'}
+  tags:
+    - numpy

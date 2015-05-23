@@ -1,0 +1,40 @@
+- name: Install packages needed for I2C
+  sudo: yes
+  apt: pkg={{ item.pkg }} state=latest
+  with_items:
+    - { pkg: 'libi2c-dev'}
+    - { pkg: 'i2c-tools'}
+  tags:
+    - i2c
+
+- name: Make sure I2C chip is not blacklisted.
+  lineinfile:
+    dest=/etc/modprobe.d/raspi-blacklist.conf
+    line='blacklist i2c-bcm2708'
+    state=absent
+  tags:
+    - i2c
+
+- name: Enable I2C in /etc/modules
+  lineinfile:
+    dest=/etc/modules
+    line={{ item.line }}
+    state=present
+  with_items:
+      - { line: 'i2c-dev'}
+      - { line: 'i2c-bcm2708'}
+  tags:
+    - i2c
+
+- name: Enable I2C in /boot/config.txt
+  lineinfile:
+    dest=/boot/config.txt
+    line={{ item.line }}
+    state=present
+  when: is_pi2 | bool
+  with_items:
+      - { line: 'dtparam=i2c_arm=on'}
+      - { line: 'dtparam=i2c1=on'}
+  tags:
+    - i2c
+

@@ -1,0 +1,36 @@
+- name: Install packages needed for PyBerryIMU
+  sudo: yes
+  apt: pkg={{ item.pkg }} state=latest
+  with_items:
+    - { pkg: 'build-essential'}
+    - { pkg: 'python-dev'}
+    - { pkg: 'libi2c-dev'}
+    - { pkg: 'i2c-tools'}
+    - { pkg: 'libffi-dev'}
+  tags:
+    - pyberryimu
+
+- name: Create Virtualenv in /home/{{ user }}/.virtualenvs
+  command: mkvirtualenv berryimu
+  ignore_errors: yes
+  tags:
+    - pyberryimu
+
+- name: Pip | Install PyBerryIMU to virtualenv
+  pip:
+    name=https://github.com/hbldh/pyberryimu.git
+    virtualenv=/home/{{ user }}/.virtualenvs/berryimu
+    state=latest
+  tags:
+    - pyberryimu
+    - pyberryimu-update
+
+- name: Pip | Install extra Python modules
+  sudo: yes
+  pip: name={{ item.pkg }} state=latest
+  with_items:
+    - { pkg: 'ipython'}
+    - { pkg: 'glances'}
+  tags:
+    - pyberryimu
+    - pyberryimu-update
